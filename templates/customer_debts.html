@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Manage Debts</h2>
+
+<h3>Add a New Debt</h3>
+<style>
+    .form-grid {
+        display: grid;
+        grid-template-columns: 150px 200px;
+        gap: 10px 15px;
+        align-items: center;
+        margin-bottom: 1em;
+    }
+
+    .form-grid label {
+        text-align: right;
+        padding-right: 5px;
+    }
+</style>
+
+<form method="POST">
+    <input type="hidden" name="action" value="add">
+    
+    <div class="form-grid">
+        <label for="debt_amount">Amount ($):</label>
+        <input type="number" name="debt_amount" step="0.01" required>
+
+        <label for="debt_rate">Interest Rate (%):</label>
+        <input type="number" name="debt_rate" step="0.01" required>
+
+        <label for="debt_date">Start Date:</label>
+        <input type="date" name="debt_date" required>
+
+        <label for="debt_terms">Duration (Months):</label>
+        <input type="text" name="debt_terms" required>
+    </div>
+
+    <input type="submit" value="Add Debt">
+</form>
+
+
+<h3>Your Debts</h3>
+<table border="1">
+    <tr>
+        <th>Amount ($)</th><th>Interest Rate (%)</th><th>Start Date</th><th>Duration (Months)</th><th>Actions</th>
+    </tr>
+    {% for debt in debts %}
+    <tr>
+        <td>{{ debt['debt_amount'] }}</td>
+        <td>{{ debt['debt_rate'] }}</td>
+        <td>{{ debt['debt_date'] }}</td>
+        <td>{{ debt['debt_terms'] }}</td>
+        <td>
+            <!-- Delete Form -->
+            <form method="POST" style="display:inline;">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="debt_id" value="{{ debt['debt_id'] }}">
+                <input type="submit" value="Delete">
+            </form>
+
+            <!-- Edit Toggle (optional JavaScript toggle could go here) -->
+            <details>
+                <summary>Edit</summary>
+                <form method="POST">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" name="debt_id" value="{{ debt['debt_id'] }}">
+                    Amount: <input type="number" name="debt_amount" step="0.01" value="{{ debt['debt_amount'] }}"><br>
+                    Rate: <input type="number" name="debt_rate" step="0.01" value="{{ debt['debt_rate'] }}"><br>
+                    Date: <input type="date" name="debt_date" value="{{ debt['debt_date'] }}"><br>
+                    Terms: <input type="text" name="debt_terms" value="{{ debt['debt_terms'] }}"><br>
+                    <input type="submit" value="Update">
+                </form>
+            </details>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

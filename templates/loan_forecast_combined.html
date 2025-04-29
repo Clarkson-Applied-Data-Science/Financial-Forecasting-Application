@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Loan Forecast</h1>
+
+<!-- Form 1: Forecast from EXISTING debt -->
+<h3>Forecast Existing Loan</h3>
+<form method="POST">
+    <input type="hidden" name="action" value="forecast_existing">
+    <label for="debt_id">Select a Debt:</label>
+    <select name="debt_id" required>
+        {% for d in debts %}
+            <option value="{{ d['debt_id'] }}">
+                ${{ d['debt_amount'] }} at {{ d['debt_rate'] }}% for {{ d['debt_terms'] }} months
+            </option>
+        {% endfor %}
+    </select><br>
+    <label for="extra_payment">Extra Monthly Payment ($):</label>
+    <input type="number" name="extra_payment" step="0.01" placeholder="0.00"><br>
+    <button type="submit">Forecast Loan</button>
+</form>
+
+<!-- Form 2: Forecast from NEW data -->
+<h3>Forecast a Future Loan</h3>
+<form method="POST">
+    <input type="hidden" name="action" value="forecast_future">
+    <label>Amount ($): <input type="number" name="amount" step="0.01" required></label><br>
+    <label>Rate (%): <input type="number" name="rate" step="0.01" required></label><br>
+    <label>Terms (Months): <input type="number" name="terms" required></label><br>
+    <label>Extra Monthly Payment ($): <input type="number" name="extra_payment" step="0.01" placeholder="0.00"></label><br>
+    <button type="submit">Forecast New Loan</button>
+</form>
+
+<!-- Show forecast result -->
+{% if result %}
+<hr>
+<div class="forecast-result">
+    <h2>Forecast Result:</h2>
+    <p><strong>Monthly Payment:</strong> ${{ result['monthly_payment'] }}</p>
+    <p><strong>Total Interest Paid:</strong> ${{ result['total_interest'] }}</p>
+    <p><strong>Total Paid (Loan + Interest):</strong> ${{ result['total_paid'] }}</p>
+    {% if result.extra_payment %}
+    <p><strong>Extra Monthly Payment Applied:</strong> ${{ result['extra_payment'] }}</p>
+    {% endif %}
+    <p><strong>Months to Payoff:</strong> {{ result['months_to_payoff'] }}</p>
+
+    {% if result.principal_paid %}
+    <div style="display: flex; align-items: flex-start; gap: 40px;">
+        <!-- Payments Table -->
+        <div>
+            <h3>Payments Breakdown:</h3>
+            <table>
+                <thead>
+                    <tr><th>Month</th><th>Principal Paid</th><th>Interest Paid</th></tr>
+                </thead>
+                <tbody>
+                    {% for i in range(result['principal_paid']|length) %}
+                    <tr>
+                        <td>{{ i + 1 }}</td>
+                        <td>${{ result['principal_paid'][i] }}</td>
+                        <td>${{ result['interest_paid'][i] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Chart Section -->
+        <div style="display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between; width: 100%;">
+            <!-- Pie Chart -->
+            <div style="flex: 1; min-width: 300px; max-width: 500px;">
+                <h3>Amount Paid Breakdown</h3>
+                <canvas id="pieChart" width="400" height="400"></canvas>
+            </div>
+        
+            <!-- Line Chart -->
+            <div style="flex: 2; min-width: 300px; max-width: 1600px;">
+                <h3>Principal vs. Interest Over Time</h3>
+                <canvas id="loanChart" width="600" height="300"></canvas>
+            </div>
+        </div>
+        
+        
+
+    <!-- Chart Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const principalData = {{ result['principal_paid'] | tojson }};
+        const interestData = {{ result['interest_paid'] | tojson }};
+        const labels = [...Array(principalData.length).keys()].map(i => "Month " + (i + 1));
+
+        new Chart(document.getElementById('loanChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Principal Paid',
+                        data: principalData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.3,
+                    },
+                    {
+                        label: 'Interest Paid',
+                        data: interestData,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.3,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Principal vs. Interest Over Time'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Amount ($)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Pie chart: total paid vs interest
+        const totalPrincipal = principalData.reduce((sum, val) => sum + val, 0);
+        const totalInterest = interestData.reduce((sum, val) => sum + val, 0);
+
+        new Chart(document.getElementById('pieChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['Principal Paid', 'Interest Paid'],
+                datasets: [{
+                    data: [totalPrincipal, totalInterest],
+                    backgroundColor: ['rgba(75, 192, 192, 0.7)', 'rgba(255, 99, 132, 0.7)'],
+                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Total Amount Paid Breakdown'
+                    }
+                }
+            }
+        });
+    </script>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+
+
+
+
+
+
+

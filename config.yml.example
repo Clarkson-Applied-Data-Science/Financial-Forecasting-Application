@@ -1,0 +1,14 @@
+db:
+  user: 'x'
+  pw: 'x'
+  host: 'x'
+  db: 'x'
+  port: 3306
+tables:
+  user: 'users'
+  debt: 'debt'
+  investments: 'investments'
+  transaction: 'transaction'
+  value: 'value'
+
+

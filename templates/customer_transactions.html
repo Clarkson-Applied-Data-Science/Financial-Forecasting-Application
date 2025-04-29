@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Manage Transactions</h2>
+
+<h3>Add a New Transaction</h3>
+
+<style>
+    .form-grid {
+        display: grid;
+        grid-template-columns: 150px 200px;
+        gap: 10px 15px;
+        align-items: center;
+        margin-bottom: 1em;
+    }
+
+    .form-grid label {
+        text-align: right;
+        padding-right: 5px;
+        white-space: nowrap;
+    }
+</style>
+
+<form method="POST">
+    <input type="hidden" name="action" value="add">
+    
+    <div class="form-grid">
+        <label for="trans_category">Category:</label>
+        <select name="trans_category" required>
+            <option value="">--Select--</option>
+            <option value="Income">Income</option>
+            <option value="Housing">Housing</option>
+            <option value="Food">Food</option>
+            <option value="Gas">Gas</option>
+            <option value="Loan Payment">Loan Payment</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="trans_amount">Amount ($):</label>
+        <input type="number" name="trans_amount" step="0.01" required>
+
+        <label for="trans_date">Date:</label>
+        <input type="date" name="trans_date" required>
+    </div>
+
+    <input type="submit" value="Add Transaction">
+</form>
+
+<h3>Your Transactions</h3>
+<table border="1">
+    <tr>
+        <th>Category</th><th>Amount ($)</th><th>Date</th><th>Actions</th>
+    </tr>
+    {% for txn in transactions %}
+    <tr>
+        <td>{{ txn['trans_category'] }}</td>
+        <td>{{ txn['trans_amount'] }}</td>
+        <td>{{ txn['trans_date'] }}</td>
+        <td>
+            <!-- Delete Form -->
+            <form method="POST" style="display:inline;">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="tid" value="{{ txn['tid'] }}">
+                <input type="submit" value="Delete">
+            </form>
+
+            <!-- Edit Form -->
+            <details>
+                <summary>Edit</summary>
+                <form method="POST">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" name="tid" value="{{ txn['tid'] }}">
+                    Category:
+                    <select name="trans_category" required>
+                        <option value="Income" {% if txn['trans_category'] == 'Income' %}selected{% endif %}>Income</option>
+                        <option value="Housing" {% if txn['trans_category'] == 'Housing' %}selected{% endif %}>Housing</option>
+                        <option value="Food" {% if txn['trans_category'] == 'Food' %}selected{% endif %}>Food</option>
+                        <option value="Gas" {% if txn['trans_category'] == 'Gas' %}selected{% endif %}>Gas</option>
+                        <option value="Loan Payment" {% if txn['trans_category'] == 'Loan Payment' %}selected{% endif %}>Loan Payment</option>
+                        <option value="Entertainment" {% if txn['trans_category'] == 'Entertainment' %}selected{% endif %}>Entertainment</option>
+                        <option value="Other" {% if txn['trans_category'] == 'Other' %}selected{% endif %}>Other</option>
+                    </select><br>
+                    Amount: <input type="number" name="trans_amount" step="0.01" value="{{ txn['trans_amount'] }}"><br>
+                    Date: <input type="date" name="trans_date" value="{{ txn['trans_date'] }}"><br>
+                    <input type="submit" value="Update">
+                </form>
+            </details>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

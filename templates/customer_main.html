@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome, {{ me['fname'] }}!</h1>
+
+<p>This is your customer dashboard. Here are your options:</p>
+
+<ul>
+    <li><a href="/profile">View My Profile</a></li>
+
+    <li>
+        <details>
+            <summary><strong>Manage Financials</strong></summary>
+            <ul>
+                <li><a href="/debts/manage">Manage My Debts</a></li>
+                <li><a href="/investments/manage">Manage My Investments</a></li>
+                <li><a href="/transactions/manage">Manage My Transactions</a></li>
+            </ul>
+        </details>
+    </li>
+
+    <li><a href="/debt/forecast">Debt Forecast</a></li>
+    <li><a href="/investments/status">Investment Status</a></li>
+    <li><a href="/budgeting">Budgeting</a></li> 
+    <li><a href="/logout">Logout</a></li>
+</ul>
+{% endblock %}
+

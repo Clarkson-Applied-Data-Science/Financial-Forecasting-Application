@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Budget Overview</h1>
+
+{% for month, data in budget_data.items() %}
+    <h2>{{ month }}</h2>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category, amount in data['categories'].items() %}
+            <tr>
+                <td>{{ category }}</td>
+                <td style="color: {{ 'green' if amount >= 0 else 'red' }};">
+                    ${{ '%.2f'|format(amount) }}
+                </td>
+            </tr>
+            {% endfor %}
+            <tr style="font-weight: bold;">
+                <td>Total Money In</td>
+                <td style="color: green;">${{ '%.2f'|format(data['in']) }}</td>
+            </tr>
+            <tr style="font-weight: bold;">
+                <td>Total Money Out</td>
+                <td style="color: red;">${{ '%.2f'|format(data['out']) }}</td>
+            </tr>
+            <tr style="font-weight: bold;">
+                <td>Net Total</td>
+                <td style="color: {{ 'green' if data['net'] >= 0 else 'red' }};">
+                    ${{ '%.2f'|format(data['net']) }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+{% endfor %}
+
+{% endblock %}
+
+

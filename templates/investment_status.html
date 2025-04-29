@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Stock Investment Status</h2>
+
+<h3>Portfolio Summary</h3>
+<p><strong>All-Time ROI:</strong> {{ all_time_roi }}%</p>
+<p><strong>Year-to-Date ROI:</strong> {{ ytd_roi }}%</p>
+
+<table id="investmentTable" border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th onclick="sortTable(0, this)">Purchase Date</th>
+            <th onclick="sortTable(1, this)">Ticker</th>
+            <th onclick="sortTable(2, this)">Shares</th>
+            <th onclick="sortTable(3, this)">Purchase Price</th>
+            <th onclick="sortTable(4, this)">Current Price</th>
+            <th onclick="sortTable(5, this)">Total Value</th>
+            <th onclick="sortTable(6, this)">Gain / Loss</th>
+            <th onclick="sortTable(7, this)">All-Time ROI (%)</th>
+            <th onclick="sortTable(8, this)">YTD ROI (%)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inv in investments %}
+        <tr>
+            <td>{{ inv.inv_date }}</td>
+            <td>{{ inv.stock_tic }}</td>
+            <td>{{ inv.stock_shares }}</td>
+            <td>${{ inv.stock_purchase_price }}</td>
+            <td>{% if inv.current_price == 'Error' %}<span style="color:red;">Error</span>{% else %}${{ inv.current_price }}{% endif %}</td>
+            <td>{% if inv.total_value == 'Error' %}<span style="color:red;">Error</span>{% else %}${{ inv.total_value }}{% endif %}</td>
+            <td>{% if inv.gain_loss == 'Error' %}
+                    <span style="color:red;">Error</span>
+                {% else %}
+                    <span style="color: {{ 'green' if inv.gain_loss >= 0 else 'red' }};">
+                        ${{ inv.gain_loss }}
+                    </span>
+                {% endif %}
+            </td>
+            <td>{% if inv.roi == 'Error' %}
+                    <span style="color:red;">Error</span>
+                {% else %}
+                    <span style="color: {{ 'green' if inv.roi >= 0 else 'red' }};">
+                        {{ inv.roi }}%
+                    </span>
+                {% endif %}
+            </td>
+            <td>{% if inv.ytd_roi == 'Error' %}
+                    <span style="color:red;">Error</span>
+                {% else %}
+                    <span style="color: {{ 'green' if inv.ytd_roi >= 0 else 'red' }};">
+                        {{ inv.ytd_roi }}%
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<form method="get">
+    <button type="submit">Refresh Prices</button>
+</form>
+
+<script>
+let currentSortColumn = null;
+let currentSortDir = "asc";
+
+function clearArrows() {
+    const headers = document.querySelectorAll("#investmentTable th");
+    headers.forEach(header => {
+        header.innerHTML = header.innerHTML.replace(/[\u25B2\u25BC]/g, "").trim();
+    });
+}
+
+function sortTable(columnIndex, th) {
+    const table = document.getElementById("investmentTable");
+    const tbody = table.tBodies[0];
+    const rows = Array.from(tbody.rows);
+
+    let dir = "asc";
+    if (currentSortColumn === columnIndex && currentSortDir === "asc") {
+        dir = "desc";
+    }
+
+    clearArrows();
+    th.innerHTML += dir === "asc" ? " ▲" : " ▼";
+
+    currentSortColumn = columnIndex;
+    currentSortDir = dir;
+
+    rows.sort((a, b) => {
+        let x = a.cells[columnIndex].innerText.replace(/[$,%]/g, "").trim();
+        let y = b.cells[columnIndex].innerText.replace(/[$,%]/g, "").trim();
+
+        let xNum = parseFloat(x);
+        let yNum = parseFloat(y);
+
+        if (!isNaN(xNum) && !isNaN(yNum)) {
+            return dir === "asc" ? xNum - yNum : yNum - xNum;
+        } else {
+            return dir === "asc" ? x.localeCompare(y) : y.localeCompare(x);
+        }
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
+}
+</script>
+
+{% endblock %}
+

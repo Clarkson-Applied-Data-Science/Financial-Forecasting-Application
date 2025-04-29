@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>My Profile</h2>
+
+<table border="1" cellpadding="8">
+    <tr><th>User ID</th><td>{{ user['uid'] }}</td></tr>
+    <tr><th>Name</th><td>{{ user['fname'] }}</td></tr>
+    <tr><th>Email</th><td>{{ user['email'] }}</td></tr>
+    <tr><th>Role</th><td>{{ user['role'] }}</td></tr>
+    <tr><th>Date of Birth</th><td>{{ user['dob'] }}</td></tr>
+</table>
+
+<p><a href="/logout">Logout</a></p>
+{% endblock %}
+
