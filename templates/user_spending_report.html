@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>User Spending Report</h1>
+
+<h2>Category Totals & Averages</h2>
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Average Amount</th>
+            <th>Users with this Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category, data in report.categories.items() %}
+        <tr>
+            <td>{{ category }}</td>
+            <td style="color: {{ 'green' if data.total >= 0 else 'red' }};">
+                ${{ "%.2f"|format(data.total) }}
+            </td>
+            <td style="color: {{ 'green' if data.average >= 0 else 'red' }};">
+                ${{ "%.2f"|format(data.average) }}
+            </td>
+            <td>{{ data.user_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<h2>Summary</h2>
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Total Money In</th>
+        <td style="color: green;">${{ "%.2f"|format(report.total_in) }}</td>
+    </tr>
+    <tr>
+        <th>Total Money Out</th>
+        <td style="color: red;">${{ "%.2f"|format(report.total_out) }}</td>
+    </tr>
+    <tr>
+        <th>Net Total</th>
+        <td style="color: {{ 'green' if report.net >= 0 else 'red' }};">
+            ${{ "%.2f"|format(report.net) }}
+        </td>
+    </tr>
+</table>
+{% endblock %}

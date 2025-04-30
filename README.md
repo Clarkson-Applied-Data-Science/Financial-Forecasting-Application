@@ -1,21 +1,59 @@
 ## 🧮 Financial Planning Application by Jacob Parker
 
+#### 🔐 Login Credentials
+## Users
+
+### Admin
+- Email: admin@admin.com  
+- Password: ABC123  
+- Role: admin
+
+### Customer1
+- Email: a@a.com  
+- Password: 123456  
+- Role: customer
+
+### Customer2
+- Email: c@c.com  
+- Password: 789  
+- Role: customer
+
+---
+
 ### 🔍 Overview
 
 The goal of this project is to create a user-friendly **financial planning application** where users can store and retrieve non-sensitive financial data. The application allows users to input a variety of financial details—including **transactions**, **investments**, and **debts**—which are securely stored in a **MySQL** database. This data is then presented back to users in multiple formats, helping them assess their current financial standing with clarity and ease.
+
+In addition to user functionality, the application includes an **admin dashboard** that enables administrators to **manage users** and **view analytical reports** across all user accounts.
 
 <p align="center">
   <img src="images/schema.png" alt="Schema" width="600">
 </p>
 
----
-
 ### 🧭 Main Features
 
-The application includes **four main pages**, each designed to serve a specific financial planning purpose:
+The application includes two user roles: **customers** and **admins**, each with access to tailored interfaces and features.
+
+#### 👤 Customer View
+Customers have access to **four main pages**, each designed to serve a specific financial planning purpose:
+
+- **Managing Financials** – Add, upadate, and delete debt, investments, or transactions
+- **Transactions** – Track and categorize income or expenses
+- **Investments** – View stock performance and ROI over time
+- **Debts** – Forecast loan payments and remaining balances
 
 <p align="center">
   <img src="images/main-menu.png" alt="Main Menu" width="400">
+</p>
+
+#### 🔐 Admin View
+Admins have access to an administrative dashboard with two primary tools:
+
+- **User Management** – Monitor all users and their data
+- **Analytics Reports** – View aggregate trends across all transactions
+
+<p align="center">
+  <img src="images/admin-menu.png" alt="Admin Menu" width="200">
 </p>
 
 ---
@@ -41,6 +79,9 @@ A forecasting tool that:
   <img src="images/debt-forecast.png" alt="Debt Forecast" width="400">
 </p>
 
+<p align="center">
+  <img src="images/debt-forecast2.png" alt="Debt Forecast" width="800">
+</p>
 ---
 
 #### 📈 Investments  
@@ -65,5 +106,19 @@ A budget overview that helps users understand their spending habits:
   <img src="images/budget.png" alt="Budget" width="200">
 </p>
 
-#### 🔐 Login Credentials
-<table align="left"> <thead> <tr> <th>Role</th> <th>Username</th> <th>Password</th> </tr> </thead> <tbody> <tr> <td>👨‍💼 Admin</td> <td><code>a@a.com</code></td> <td><code>ABC123</code></td> </tr> <tr> <td>👤 Customer</td> <td><code>b@b.com</code></td> <td><code>123456</code></td> </tr> </tbody> </table>
+---
+
+### 📊 Admin User Spending Report
+
+Admins can access a detailed **User Spending Report** that aggregates transaction data across all users. This report provides:
+
+- **Total and Average Amounts** spent or earned by category
+- **Number of users** who reported spending in each category
+- A summary view of:
+  - **Total Money In**
+  - **Total Money Out**
+  - **Net Total** across the system
+
+<p align="center">
+  <img src="images/admin-spending-report.png" alt="Admin Spending Report" width="450">
+</p>

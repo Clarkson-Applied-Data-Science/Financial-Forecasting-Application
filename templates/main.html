@@ -1,16 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Main menu</h1>
-      <div id="menumsg">
-		Hello, {{ me.fname }}  ({{ me.uid }}, {{ me.role }})
-	  </div>
-	<br><br>
+    <h1>Admin Menu</h1>
+    <div id="menumsg">
+        Hello, {{ me.fname }}
+    </div>
+    <br><br>
 
-	<a href="/team/dashboard">Team Dashboard</a><br>
-	<a href="/users/manage">Manage Users</a><br>
-	<a href="#">View Users</a><br>
-	<a href="/logout">Logout</a><br>
-	
-	
+    <a href="/users/manage">Manage Users</a><br>
+    <a href="/reports/user_spending">User Spending Report</a><br>
+    <a href="/logout">Logout</a><br>
 {% endblock %}

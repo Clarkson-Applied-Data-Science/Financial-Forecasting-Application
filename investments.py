@@ -6,6 +6,15 @@ class investments(baseObject):
     def __init__(self):
         self.setup()
 
+
+    def is_valid_ticker(self, ticker):
+        try:
+            t = yf.Ticker(ticker)
+            info = t.info
+            return info and info.get('regularMarketPrice') is not None
+        except Exception:
+            return False
+        
     def get_status_by_user(self, uid):
         self.getByField("uid", uid)
         enriched_data = []

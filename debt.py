@@ -48,6 +48,14 @@ class debt(baseObject):
             'interest_paid': interest_paid,
             'months_to_payoff': months
         }
+    def get_all_debt_forecasts(self):
+        self.getAll()
+        all_forecasts = []
+        for record in self.data:
+            forecast = self.forecast_from_db(record[self.pk])
+            forecast['uid'] = record['uid']
+            all_forecasts.append(forecast)
+        return all_forecasts
 
     def forecast_from_db(self, debt_id, extra_payment=0):
         self.getById(debt_id)

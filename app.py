@@ -1,4 +1,3 @@
-#Test123
 from flask import Flask
 from flask import render_template
 from flask import request,session, redirect, url_for, send_from_directory,make_response 
@@ -207,42 +206,6 @@ def manage_investments():
     inv.getByField("uid", session['user']['uid'])
     return render_template('customer_investments.html', investments=inv.data, error=error)
 
-"""@app.route('/transactions/manage', methods=['GET', 'POST'])
-def manage_transactions():
-    if checkSession() == False or session['user']['role'] != 'customer':
-        return redirect('/login')
-
-    t = transaction()
-
-    if request.method == 'POST':
-        action = request.form.get('action')
-
-        if action == 'add':
-            new_txn = {
-                'trans_category': request.form['trans_category'],
-                'trans_amount': request.form['trans_amount'],
-                'trans_date': request.form['trans_date'],
-                'user_id': session['user']['uid']
-            }
-            t.set(new_txn)
-            t.insert()
-
-        elif action == 'delete':
-            t.deleteById(request.form['tid'])
-
-        elif action == 'update':
-            updated_txn = {
-                'tid': request.form['tid'],
-                'trans_category': request.form['trans_category'],
-                'trans_amount': request.form['trans_amount'],
-                'trans_date': request.form['trans_date'],
-                'user_id': session['user']['uid']
-            }
-            t.set(updated_txn)
-            t.update()
-
-    t.getByField("user_id", session['user']['uid'])
-    return render_template('customer_transactions.html', transactions=t.data)"""
 
 @app.route('/transactions/manage', methods=['GET', 'POST'])
 def manage_transactions():
@@ -365,6 +328,16 @@ def budgeting():
     sorted_data = dict(sorted(budget_data.items(), reverse=True))
 
     return render_template('budgeting.html', budget_data=sorted_data)
+
+@app.route('/reports/user_spending')
+def user_spending_report():
+    if checkSession() == False or session['user']['role'] != 'admin':
+        return redirect('/login')
+
+    trans = transaction()
+    report = trans.getCategoryTotalsAcrossUsers()
+
+    return render_template('user_spending_report.html', report=report)
 
 if __name__ == '__main__':
    app.run(host='127.0.0.1',debug=True)   

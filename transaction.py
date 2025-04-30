@@ -51,3 +51,53 @@ class transaction(baseObject):
 
         return monthly_data
 
+    def getCategoryTotalsAcrossUsers(self):
+        sql = """
+            SELECT 
+                trans_category,
+                COUNT(DISTINCT user_id) AS user_count,
+                SUM(CASE 
+                        WHEN trans_category = 'Income' THEN trans_amount 
+                        ELSE -trans_amount 
+                    END) AS total_amount,
+                AVG(CASE 
+                        WHEN trans_category = 'Income' THEN trans_amount 
+                        ELSE -trans_amount 
+                    END) AS avg_amount
+            FROM `{0}`
+            GROUP BY trans_category
+            ORDER BY FIELD(trans_category, 'Income', 'Food', 'Gas', 'Housing', 'Loan Payment', 'Entertainment');
+        """.format(self.tn)
+
+        self.cur.execute(sql)
+        results = self.cur.fetchall()
+
+        report = {
+            'categories': {},
+            'total_in': 0.0,
+            'total_out': 0.0,
+            'net': 0.0
+        }
+
+        for row in results:
+            cat = row['trans_category']
+            total = float(row['total_amount'])
+            avg = float(row['avg_amount'])
+
+            # Store individual category stats
+            report['categories'][cat] = {
+                'total': total,
+                'average': avg,
+                'user_count': row['user_count']
+            }
+
+            # Aggregate income and spending
+            if cat == 'Income':
+                report['total_in'] += total
+            else:
+                report['total_out'] += abs(total)
+
+        report['net'] = report['total_in'] - report['total_out']
+        return report
+
+
